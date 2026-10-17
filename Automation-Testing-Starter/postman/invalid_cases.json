@@ -1,0 +1,27 @@
+
+[
+  {
+    "case": "Missing Password",
+    "email": "eve.holt@reqres.in",
+    "password": "",
+    "omit_email": false,
+    "omit_password": true,
+    "expected_status": 400
+  },
+  {
+    "case": "Missing Email",
+    "email": "",
+    "password": "cityslicka",
+    "omit_email": true,
+    "omit_password": false,
+    "expected_status": 400
+  },
+  {
+    "case": "Wrong Password",
+    "email": "eve.holt@reqres.in",
+    "password": "wrong_password_123",
+    "omit_password": false,
+    "omit_email": false,
+    "expected_status": 401
+  }
+]

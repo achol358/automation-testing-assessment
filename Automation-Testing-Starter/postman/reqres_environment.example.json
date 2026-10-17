@@ -1,0 +1,14 @@
+{
+  "id": "12345678-0000-4000-8000-000000000001",
+  "name": "ReqRes Assessment LOCAL",
+  "values": [
+    {
+      "key": "api_key",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_using": "starter example"
+}

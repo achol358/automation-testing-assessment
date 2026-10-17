@@ -1,0 +1,314 @@
+{
+  "info": {
+    "_postman_id": "09eb61ea-0b27-41cb-901e-1c52dec3c5ca",
+    "name": "ReqRes API Automation Assessment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56463615",
+    "_collection_link": "https://go.postman.co/collection/56463615-09eb61ea-0b27-41cb-901e-1c52dec3c5ca?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Q3 - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Login status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst data = pm.response.json();\r\n\r\npm.test(\"Token received\", function () {\r\n    pm.expect(data.token).to.be.a(\"string\");\r\n    pm.expect(data.token).not.to.be.empty;\r\n});\r\n\r\nif (typeof data.token === \"string\" && data.token.length > 0) {\r\n    pm.environment.set(\"authToken\", data.token);\r\n}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"eve.holt@reqres.in\",\r\n  \"password\": \"cityslicka\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q4 - Get User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"GET status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst user = pm.response.json().data;\r\n\r\npm.test(\"User name is correct\", function () {\r\n    pm.expect(user.first_name).to.eql(\"Janet\");\r\n    pm.expect(user.last_name).to.eql(\"Weaver\");\r\n});\r\n\r\npm.test(\"User email is correct\", function () {\r\n    pm.expect(user.email).to.eql(\"janet.weaver@reqres.in\");\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q5 - Update User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"PUT status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst data = pm.response.json();\r\n\r\npm.test(\"Updated name is correct\", function () {\r\n    pm.expect(data.name).to.eql(\"Jane Updated\");\r\n});\r\n\r\npm.test(\"Updated job is correct\", function () {\r\n    pm.expect(data.job).to.eql(\"Senior QA Engineer\");\r\n});\r\n\r\npm.test(\"updatedAt is a valid timestamp\", function () {\r\n    pm.expect(data.updatedAt).to.be.a(\"string\");\r\n    pm.expect(\r\n        Number.isNaN(Date.parse(data.updatedAt))\r\n    ).to.eql(false);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Jane Updated\",\r\n  \"job\": \"Senior QA Engineer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q6 - Patch User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "\r\npm.test(\"PATCH status is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst data = pm.response.json();\r\n\r\npm.test(\"Job updated correctly\", function () {\r\n    pm.expect(data.job).to.eql(\"Lead QA Engineer\");\r\n});\r\n\r\npm.test(\"Updated timestamp exists\", function () {\r\n    pm.expect(data.updatedAt).to.be.a(\"string\");\r\n    pm.expect(\r\n        Number.isNaN(Date.parse(data.updatedAt))\r\n    ).to.eql(false);\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"job\": \"Lead QA Engineer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q8 - Missing Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Missing password returns 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"eve.holt@reqres.in\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q8 - Missing Email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Missing email returns 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"password\": \"cityslicka\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Q8 - User Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"User not found returns 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/23",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "23"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

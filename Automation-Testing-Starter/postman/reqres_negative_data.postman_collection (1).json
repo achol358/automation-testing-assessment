@@ -1,0 +1,112 @@
+{
+  "info": {
+    "name": "ReqRes Negative Data Tests",
+    "description": "Q8 data-driven negative tests. The pre-request script sets q8_request_body before Newman interpolates {{q8_request_body}}. Requires -d postman/invalid_cases.json. No API keys embedded.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Q8 - Data Driven Login",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(function () {",
+              "    var row = pm.iterationData.toObject();",
+              "    var label = String(row.case || \"Unnamed case\");",
+              "    var body = {};",
+              "",
+              "    if (row.omit_email !== true) {",
+              "        body.email = String(row.email || \"\");",
+              "    }",
+              "    if (row.omit_password !== true) {",
+              "        body.password = String(row.password || \"\");",
+              "    }",
+              "",
+              "    if (label === \"Wrong Password\" &&",
+              "        (!body.email || !body.password)) {",
+              "        throw new Error(\"Wrong Password case must send both email and password\");",
+              "    }",
+              "",
+              "    pm.environment.set(\"q8_request_body\", JSON.stringify(body));",
+              "    console.log(\"Q8 case:\", label);",
+              "    console.log(\"Body fields sent:\", Object.keys(body).join(\", \"));",
+              "}());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "(function () {",
+              "    var label = String(pm.iterationData.get(\"case\") || \"Unnamed case\");",
+              "    var expected = Number(pm.iterationData.get(\"expected_status\"));",
+              "",
+              "    pm.test(label + \" - expected status \" + expected, function () {",
+              "        pm.response.to.have.status(expected);",
+              "    });",
+              "",
+              "    pm.test(label + \" - response is 4xx\", function () {",
+              "        pm.expect(pm.response.code).to.be.within(400, 499);",
+              "    });",
+              "",
+              "    pm.test(label + \" - correct error response\", function () {",
+              "        var response = pm.response.json();",
+              "        pm.expect(response).to.have.property(\"error\");",
+              "        pm.expect(response.error).to.be.a(\"string\").and.not.empty;",
+              "        if (label === \"Wrong Password\") {",
+              "            pm.expect(response.error).not.to.match(/missing\\s+(email|username|password)/i);",
+              "        }",
+              "    });",
+              "}());"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "{{api_key}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "X-Reqres-Env",
+            "value": "prod",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{{q8_request_body}}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
